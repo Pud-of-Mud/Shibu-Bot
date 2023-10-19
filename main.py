@@ -1,41 +1,80 @@
-# This code is based on the following example:
-# https://discordpy.readthedocs.io/en/stable/quickstart.html#a-minimal-bot
-
+# Dependances
+import discord
 import os
 
-import discord
+from discord import app_commands
+from discord.ext import commands
+from keep_alive import keep_alive
+
+# Token Varables, etc
+GUILD_ID = 771181244427010058
+botToken = os.environ['TOKEN']
 
 intents = discord.Intents.default()
 intents.message_content = True
-
 client = discord.Client(intents=intents)
+tree = discord.app_commands.CommandTree(client)
 
 
+# Slash Commands
+@app_commands.command()
+async def dontusethiscommand(interaction: discord.Interaction):
+  await interaction.response.send_message("Placeholder Text!")
+
+@app_commands.command()
+async def uselesscommand(interaction: discord.Interaction):
+  await interaction.response.send_message("Placeholder Text!")
+  
+tree.add_command(dontusethiscommand)
+tree.add_command(uselesscommand)
+
+# Events
 @client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+  await tree.sync()
+  print('We\'re in. We have logged in as {0.user}'.format(client))
 
 @client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+async def on_message(message): 
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+  # Thumbs up game!
+  if message.content.startswith('$thumb'):
+    channel = message.channel
+    await channel.send('Send me that 👍 reaction, mate')
 
+    def check(reaction, user):
+        return user == message.author and str(reaction.emoji) == '👍'
+
+    try:
+        reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+    except asyncio.TimeoutError:
+        await channel.send('👎')
+    else:
+        await channel.send('👍')
+  
+  # Profanity filter
+  if message.author != client.user:
+    if "Kys" in message.content or "kys" in message.content:
+      await message.channel.send("thats not very nice :((")
+    elif "shit" in message.content or "fuck" in message.content or "bitch" in message.content or "ass" in message.content:
+      await message.channel.send("You can't say that :\ ")
+  
+  # PK Fire filter TODO: Fix
+  #if "ok" in message.content or "Ok" in message.content or "OK" in message.content:
+    #await message.edit(message.id, message="pk... FIRE!")
+
+keep_alive()
 
 try:
   token = os.getenv("TOKEN") or ""
   if token == "":
-    raise Exception("Please add your token to the Secrets pane.")
-  client.run(token)
+    raise Exception("Please add your token")
+  client.run(botToken)
+  
 except discord.HTTPException as e:
     if e.status == 429:
         print(
             "The Discord servers denied the connection for making too many requests"
         )
-        print(
-            "Get help from https://stackoverflow.com/questions/66724687/in-discord-py-how-to-solve-the-error-for-toomanyrequests"
-        )
     else:
-        raise e
+        raise e  
