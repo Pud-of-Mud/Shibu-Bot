@@ -1,10 +1,10 @@
-# Discord Rename Bot
-A Discord bot that is for renaming users within a discord server. 
+# Shibu! Bot
+A Discord bot that is for whatever the Shibu decides within a discord server. 
 
 ## Getting Started
 
 To get set up, you'll need to follow [these bot account setup instructions](https://discordpy.readthedocs.io/en/stable/discord.html),
-and then copy the token for your bot and add it into the "" varable. 
+and then copy the token for your bot and add it into the "token" varable. 
 
 ## FAQ
 
