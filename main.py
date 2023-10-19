@@ -36,9 +36,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message): 
-
+  if "nerd" in message.content or "Nerd" in message.content:
+    await message.add_reaction("\U0001F913")
+  
+  if message.content.startswith('!ping'):
+    await message.channel.send("@everyone has been pinged!")
+  
   # Thumbs up game!
-  if message.content.startswith('$thumb'):
+  if message.content.startswith('👍'):
     channel = message.channel
     await channel.send('Send me that 👍 reaction, mate')
 
@@ -57,12 +62,12 @@ async def on_message(message):
     if "Kys" in message.content or "kys" in message.content:
       await message.channel.send("thats not very nice :((")
     elif "shit" in message.content or "fuck" in message.content or "bitch" in message.content or "ass" in message.content:
-      await message.channel.send("You can't say that :\ ")
+      await message.channel.send("You can't say that, there are children present :\ ")
   
-  # PK Fire filter TODO: Fix
-  #if "ok" in message.content or "Ok" in message.content or "OK" in message.content:
-    #await message.edit(message.id, message="pk... FIRE!")
-
+  # PK Fire
+  if "pk" in message.content or "Pk" in message.content:
+    await message.channel.send(content="pk... FIRE!")
+    
 keep_alive()
 
 try:
